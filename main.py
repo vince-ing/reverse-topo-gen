@@ -1,4 +1,6 @@
-# main.py
+
+import imageio.v2 as imageio
+from models.vector_mapping import simulate_topography_evolution
 from visualization.data_load import load_topography
 from visualization.plotting import plot_topography
 from visualization.seismic_profile_plotter import (
@@ -17,8 +19,10 @@ from models.vector_mapping import (
     load_topo_points,
     load_vectors,
     map_topo_to_vectors,
-    plot_mapping
+    plot_mapping, 
+    plot_mapping_simple
 )
+
 
 def plot_simple_topography():
     """Original topography plotting function"""
@@ -109,12 +113,26 @@ def main():
 
     topo_file = "data/Topo/topo_04.dat"
     vectors_file = "data/Vectors/v_03.dat"
+    vector_files = [
+        "data/Vectors/v_03.dat",
+        "data/Vectors/v_02.dat",
+        "data/Vectors/v_01.dat",
+        "data/Vectors/v_00.dat"
+    ]
 
     topo_points = load_topo_points(topo_file)
     vectors = load_vectors(vectors_file)
     mapping_results = map_topo_to_vectors(topo_points, vectors)
 
     plot_mapping(topo_points, vectors, mapping_results)
+    plot_mapping_simple(topo_points, mapping_results)
+
+    frame_paths = simulate_topography_evolution(topo_file, vector_files)
+    # (Optional: You can use imageio or OpenCV to combine frames into a GIF/video)
+
+    # For GIF:
+    images = [imageio.imread(fp) for fp in frame_paths]
+    imageio.mimsave('topo_evolution.gif', images, duration=1)
 
 if __name__ == "__main__":
     main()
