@@ -1,7 +1,8 @@
 # main.py
 import pandas as pd
-
 import imageio.v2 as imageio
+
+from config import *
 from models.vector_mapping import simulate_topography_evolution
 from visualization.data_load import load_topography
 from visualization.plotting import plot_topography
@@ -28,6 +29,7 @@ from models.vector_mapping import (
     plot_mapping_simple
 )
 from models.interpolation_z import run_interpolation as run_z_interpolation
+from models.exponential import run_exponential_model
 
 
 def plot_simple_topography():
@@ -191,7 +193,9 @@ def main():
     print("=" * 60)
     print("Topography & Seismic Profile Visualization")
     print("=" * 60)
-    run_z_interpolation(create_animation=True)
+
+    #run_z_interpolation(create_animation=True)
+    run_exponential_model(create_animation=True)
     
     # Choose what to run:
     # Option 1: Plot simple topography
