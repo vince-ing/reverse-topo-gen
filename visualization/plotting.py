@@ -31,7 +31,7 @@ def plot_topography(
     ax.set_title(f"{title}  (VE = {vertical_exaggeration:.1f}×)")
     ax.grid(True, alpha=0.3)
 
-    ax.set_aspect('equal')
+    ax.set_aspect(vertical_exaggeration)
 
     plt.tight_layout()
     plt.show()
