@@ -13,6 +13,12 @@ from visualization.spatial_seismic_plotter import (
 )
 from visualization.vector_plotter import plot_vectors_and_topography
 from pathlib import Path
+from models.vector_mapping import (
+    load_topo_points,
+    load_vectors,
+    map_topo_to_vectors,
+    plot_mapping
+)
 
 def plot_simple_topography():
     """Original topography plotting function"""
@@ -100,6 +106,15 @@ def main():
     print("\nOptions:")
     print("  - To change coordinate system, edit use_coordinate in main.py")
     print("  - To plot a single line, uncomment OPTION 2 in plot_seismic_sections()")
+
+    topo_file = "data/Topo/topo_04.dat"
+    vectors_file = "data/Vectors/v_03.dat"
+
+    topo_points = load_topo_points(topo_file)
+    vectors = load_vectors(vectors_file)
+    mapping_results = map_topo_to_vectors(topo_points, vectors)
+
+    plot_mapping(topo_points, vectors, mapping_results)
 
 if __name__ == "__main__":
     main()
