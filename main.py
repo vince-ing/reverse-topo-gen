@@ -1,5 +1,6 @@
 # main.py
 import pandas as pd
+from models.interpolation import interpolate_surface, save_topography_gif
 
 import imageio.v2 as imageio
 from models.vector_mapping import simulate_topography_evolution
@@ -27,6 +28,61 @@ from models.vector_mapping import (
     plot_mapping, 
     plot_mapping_simple
 )
+def run_topography_interpolation_and_gif():
+    topo_file = Path("data/Topo/topo_04.dat")
+    x_init, z_init = load_topography(topo_file)
+
+    vector_files = [
+        "data/Vectors/v_03.dat",
+        "data/Vectors/v_02.dat",
+        "data/Vectors/v_01.dat",
+        "data/Vectors/v_00.dat"
+    ]
+
+    vector_x_list = []
+    vector_z_list = []
+    vector_x_coords_list = []
+
+    for vf in vector_files:
+        # Assumes load_vectors returns array with columns: x_coord, dx, dz
+        v = load_vectors(vf)
+        if v.shape[1] < 3:
+            raise ValueError(f"Vector file {vf} should contain at least 3 columns: x_coord, dx, dz")
+
+        vector_x_coords_list.append(v[:, 0])  # Vector point x coords
+        vector_x_list.append(v[:, 1])         # dx displacement
+        vector_z_list.append(v[:, 2])         # dz displacement
+
+        # Optional debug print
+        print(f"Loaded {vf} with vector points: {len(v[:,0])}")
+
+    time_stamps = [0, 5, 9, 20, 27]
+    desired_times = [0, 2, 5, 7, 9, 12, 16, 20, 23, 27]
+
+    surfaces = interpolate_surface(
+        x_init, z_init,
+        vector_x_list, vector_z_list,
+        vector_x_coords_list,
+        time_stamps,
+        desired_times,
+        lambda_topo=10.0
+    )
+
+    xlim = (min(x_init), max(x_init))
+    zlim = (min(z_init) - 10, max(z_init) + 10)
+    # In main.py
+
+    save_topography_gif(
+        surfaces,
+        filename='interpolated_topography.gif',
+        xlim=xlim,
+        ylim=zlim,
+        figsize=(8, 8),
+        duration=0.7
+    )
+    print("Saved interpolated topo animation to interpolated_topography.gif")
+
+
 
 
 def plot_simple_topography():
@@ -186,49 +242,53 @@ def run_reconstruction():
 
 def main():
     """Main entry point - choose what to run"""
+
+    ##topography interpolation gif 
+    run_topography_interpolation_and_gif()
     
-    print("=" * 60)
-    print("Topography & Seismic Profile Visualization")
-    print("=" * 60)
+    # print("=" * 60)
+    # print("Topography & Seismic Profile Visualization")
+    # print("=" * 60)
     
-    # Choose what to run:
-    # Option 1: Plot simple topography
-    # plot_simple_topography()
+    # # Choose what to run:
+    # # Option 1: Plot simple topography
+    # # plot_simple_topography()
     
-    # Option 2: Plot seismic sections (DEFAULT)
-    #  Call the plotting function with the loaded DataFrames
-    #plot_comparison()
-    #plot_seismic_sections()
-    plot_vector_data()
-    #plot_full_warped_profile()
-    run_reconstruction()
+    # # Option 2: Plot seismic sections (DEFAULT)
+    # #  Call the plotting function with the loaded DataFrames
+    # #plot_comparison()
+    # #plot_seismic_sections()
+    # plot_vector_data()
+    # #plot_full_warped_profile()
+    # run_reconstruction()
     
-    print("\nOptions:")
-    print("  - To change coordinate system, edit use_coordinate in main.py")
-    print("  - To plot a single line, uncomment OPTION 2 in plot_seismic_sections()")
+    # print("\nOptions:")
+    # print("  - To change coordinate system, edit use_coordinate in main.py")
+    # print("  - To plot a single line, uncomment OPTION 2 in plot_seismic_sections()")
 
-    topo_file = "data/Topo/topo_04.dat"
-    vectors_file = "data/Vectors/v_03.dat"
-    vector_files = [
-        "data/Vectors/v_03.dat",
-        "data/Vectors/v_02.dat",
-        "data/Vectors/v_01.dat",
-        "data/Vectors/v_00.dat"
-    ]
+    # topo_file = "data/Topo/topo_04.dat"
+    # vectors_file = "data/Vectors/v_03.dat"
+    # vector_files = [
+    #     "data/Vectors/v_03.dat",
+    #     "data/Vectors/v_02.dat",
+    #     "data/Vectors/v_01.dat",
+    #     "data/Vectors/v_00.dat"
+    # ]
 
-    topo_points = load_topo_points(topo_file)
-    vectors = load_vectors(vectors_file)
-    mapping_results = map_topo_to_vectors(topo_points, vectors)
+    # topo_points = load_topo_points(topo_file)
+    # vectors = load_vectors(vectors_file)
+    # mapping_results = map_topo_to_vectors(topo_points, vectors)
 
-    plot_mapping(topo_points, vectors, mapping_results)
-    plot_mapping_simple(topo_points, mapping_results)
+    # plot_mapping(topo_points, vectors, mapping_results)
+    # plot_mapping_simple(topo_points, mapping_results)
 
-    frame_paths = simulate_topography_evolution(topo_file, vector_files)
-    # (Optional: You can use imageio or OpenCV to combine frames into a GIF/video)
+    # frame_paths = simulate_topography_evolution(topo_file, vector_files)
+    # # (Optional: You can use imageio or OpenCV to combine frames into a GIF/video)
 
-    # For GIF:
-    images = [imageio.imread(fp) for fp in frame_paths]
-    imageio.mimsave('topo_evolution.gif', images, duration=1)
+    # # For GIF:
+    # images = [imageio.imread(fp) for fp in frame_paths]
+    # imageio.mimsave('topo_evolution.gif', images, duration=1)
+
 
 if __name__ == "__main__":
     main()
