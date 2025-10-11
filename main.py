@@ -11,6 +11,7 @@ from visualization.spatial_seismic_plotter import (
     plot_seismic_spatial,
     analyze_line_orientation
 )
+from visualization.vector_plotter import plot_vectors_and_topography
 from pathlib import Path
 
 def plot_simple_topography():
@@ -70,6 +71,17 @@ def plot_seismic_sections():
     
     print(f"\nDone! Figure saved to {output_dir}")
 
+def plot_vector_data():
+    """Plots vector data with a topographic overlay"""
+    vector_file = Path("data/Vectors/v_03.dat")
+    topo_file = Path("data/Topo/topo_04.dat")
+    plot_vectors_and_topography(
+        vector_file,
+        topo_file,
+        title="Vector Displacement with Topography",
+        arrow_stride=15 # Lower number = more arrows
+    )
+
 def main():
     """Main entry point - choose what to run"""
     
@@ -83,6 +95,7 @@ def main():
     
     # Option 2: Plot seismic sections (DEFAULT)
     plot_seismic_sections()
+    plot_vector_data()
     
     print("\nOptions:")
     print("  - To change coordinate system, edit use_coordinate in main.py")
