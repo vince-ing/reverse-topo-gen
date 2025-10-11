@@ -1,30 +1,34 @@
 # visualization/data_load.py
 import numpy as np
+import pandas as pd
 from pathlib import Path
 
-def load_topography(filepath: str | Path):
+def load_topography(file_path: Path) -> (np.ndarray, np.ndarray):
     """
-    Load a 2-column ASCII topography file (x, z).
-    Ignores blank lines and text headers automatically.
+    Loads a two-column topography file using pandas for robustness,
+    skipping the header row.
     """
-    filepath = Path(filepath)
-
     try:
-        # Try using genfromtxt, which is more forgiving than loadtxt
-        data = np.genfromtxt(
-            filepath,
-            comments="#",     # skip comment lines
-            invalid_raise=False,
-            usecols=(0, 1),   # read only first two columns
+        # Using sep='\s+' is the modern, more reliable way to handle
+        # space-separated values.
+        topo_df = pd.read_csv(
+            file_path,
+            sep='\s+',              # Use the recommended separator
+            skiprows=1,             # Skips the text header row
+            header=None,            # No header row to read
+            names=['x', 'z'],       # Assign column names
+            engine='python'         # Use the more robust Python parsing engine
         )
+        
+        # Add a print statement for debugging
+        print(f"--- Topo Loading: Loaded {topo_df.shape[0]} points from {file_path.name} ---")
+
+        if topo_df.empty:
+            print(f"Warning: No data loaded from topography file '{file_path.name}'.")
+            return np.array([]), np.array([])
+
+        return topo_df['x'].to_numpy(), topo_df['z'].to_numpy()
+
     except Exception as e:
-        raise IOError(f"Could not read file {filepath}: {e}")
-
-    # Drop any rows that are entirely NaN
-    data = data[~np.isnan(data).any(axis=1)]
-
-    if data.ndim != 2 or data.shape[1] < 2:
-        raise ValueError(f"File {filepath} must have at least two numeric columns (x, z).")
-
-    x, z = data[:, 0], data[:, 1]
-    return x, z
+        print(f"Error loading topography file {file_path}: {e}")
+        return np.array([]), np.array([])

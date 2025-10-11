@@ -1,4 +1,5 @@
 # main.py
+import pandas as pd
 from visualization.data_load import load_topography
 from visualization.plotting import plot_topography
 from visualization.seismic_profile_plotter import (
@@ -12,6 +13,7 @@ from visualization.spatial_seismic_plotter import (
     analyze_line_orientation
 )
 from visualization.vector_plotter import plot_vectors_and_topography
+from visualization.seismic_topo import plot_topo_comparison
 from pathlib import Path
 from models.vector_mapping import (
     load_topo_points,
@@ -88,6 +90,35 @@ def plot_vector_data():
         arrow_stride=15 # Lower number = more arrows
     )
 
+
+def plot_comparison():
+    """Loads seismic and topo data and plots them for comparison."""
+    # 1. Define file paths
+    seismic_file = Path("data/Sections/0MaMora1.dat")
+    topo_file = Path("data/Topo/topo_04.dat")
+    output_dir = Path("visualization/output")
+    output_dir.mkdir(exist_ok=True, parents=True)
+
+    # 2. Load the data from paths into DataFrames
+    seismic_df = load_seismic_data(seismic_file)
+    
+    # load_topography returns x, z arrays, so we must create a DataFrame
+    topo_x, topo_z = load_topography(topo_file)
+    topo_df = pd.DataFrame({
+        'x': topo_x,
+        'z': topo_z,
+        'line_id': 'topo_04'  # Add a line_id so the plotting function can find it
+    })
+
+    # 3. Call the plotting function with the loaded DataFrames <-- ADD THIS
+    plot_topo_comparison(
+        seismic_df=seismic_df,
+        topo_df=topo_df,
+        output_dir=output_dir
+    )
+
+    
+
 def main():
     """Main entry point - choose what to run"""
     
@@ -100,8 +131,10 @@ def main():
     # plot_simple_topography()
     
     # Option 2: Plot seismic sections (DEFAULT)
-    plot_seismic_sections()
-    plot_vector_data()
+    #  Call the plotting function with the loaded DataFrames
+    plot_comparison()
+    #plot_seismic_sections()
+    #plot_vector_data()
     
     print("\nOptions:")
     print("  - To change coordinate system, edit use_coordinate in main.py")
@@ -114,7 +147,7 @@ def main():
     vectors = load_vectors(vectors_file)
     mapping_results = map_topo_to_vectors(topo_points, vectors)
 
-    plot_mapping(topo_points, vectors, mapping_results)
+    #plot_mapping(topo_points, vectors, mapping_results)
 
 if __name__ == "__main__":
     main()
