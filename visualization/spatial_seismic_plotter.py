@@ -68,9 +68,10 @@ def plot_seismic_spatial(
         df['horizontal'] = df['y']
         xlabel = 'Northing (km)'
     else:  # 'both'
-        min_x, min_y = df['x'].min(), df['y'].min()
-        df['horizontal'] = np.sqrt((df['x'] - min_x)**2 + (df['y'] - min_y)**2)
-        xlabel = 'Distance from Origin (km)'
+        # To create a NW-SE profile, set the origin to the NW corner of the data
+        origin_x, origin_y = df['x'].min(), df['y'].max()
+        df['horizontal'] = np.sqrt((df['x'] - origin_x)**2 + (df['y'] - origin_y)**2)
+        xlabel = 'Distance from NW Corner (km)'
 
     # 2. NOW, SPLIT THE DATAFRAME
     # The copies will correctly contain the 'horizontal' column.
