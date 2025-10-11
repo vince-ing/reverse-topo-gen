@@ -15,6 +15,7 @@ from visualization.spatial_seismic_plotter import (
 from visualization.vector_plotter import plot_vectors_and_topography
 from visualization.seismic_topo import plot_topo_comparison
 from visualization.warped_profile_plotter import plot_warped_seismic_section
+from visualization.seismic_reconstruction import load_vectors, reconstruct_layers, reconstruct_topography, plot_reconstruction
 from pathlib import Path
 from models.vector_mapping import (
     load_topo_points,
@@ -141,7 +142,41 @@ def plot_full_warped_profile():
         output_dir=output_dir
     )
 
+def run_reconstruction():
+    """
+    Loads seismic, topography, and vector data, runs the palinspastic
+    reconstruction on all layers, and plots the result.
+    """
+    print("\n--- Running Palinspastic Reconstruction ---")
+    seismic_file = Path("data/Sections/0MaMora1.dat")
+    vector_file = Path("data/Vectors/v_03.dat")
+    topo_file = Path("data/Topo/topo_04.dat") # <-- Path to topo data
+    output_dir = Path("visualization/output")
+    output_dir.mkdir(exist_ok=True, parents=True)
 
+    # 1. Load all data sources
+    seismic_df = load_seismic_data(seismic_file)
+    vectors = load_vectors(vector_file)
+    
+    # Load the reference topography and convert to a DataFrame
+    topo_x, topo_z = load_topography(topo_file)
+    topo_df = pd.DataFrame({'x': topo_x, 'z': topo_z})
+
+    if seismic_df.empty or vectors.size == 0 or topo_df.empty:
+        print("Could not load necessary data. Aborting reconstruction.")
+        return
+
+    # 2. Reconstruct both the seismic layers and the reference topography
+    reconstructed_seismic_df = reconstruct_layers(seismic_df, vectors)
+    reconstructed_topo_df = reconstruct_topography(topo_df, vectors)
+
+    # 3. Plot the final results
+    plot_reconstruction(
+        original_df=seismic_df,
+        reconstructed_df=reconstructed_seismic_df,
+        reconstructed_topo_df=reconstructed_topo_df,
+        output_dir=output_dir
+    )
     
 
 def main():
@@ -159,8 +194,9 @@ def main():
     #  Call the plotting function with the loaded DataFrames
     #plot_comparison()
     #plot_seismic_sections()
-    #plot_vector_data()
-    plot_full_warped_profile()
+    plot_vector_data()
+    #plot_full_warped_profile()
+    run_reconstruction()
     
     print("\nOptions:")
     print("  - To change coordinate system, edit use_coordinate in main.py")
@@ -173,7 +209,7 @@ def main():
     vectors = load_vectors(vectors_file)
     mapping_results = map_topo_to_vectors(topo_points, vectors)
 
-    #plot_mapping(topo_points, vectors, mapping_results)
+    plot_mapping(topo_points, vectors, mapping_results)
 
 if __name__ == "__main__":
     main()
