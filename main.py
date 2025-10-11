@@ -14,6 +14,7 @@ from visualization.spatial_seismic_plotter import (
 )
 from visualization.vector_plotter import plot_vectors_and_topography
 from visualization.seismic_topo import plot_topo_comparison
+from visualization.warped_profile_plotter import plot_warped_seismic_section
 from pathlib import Path
 from models.vector_mapping import (
     load_topo_points,
@@ -117,6 +118,30 @@ def plot_comparison():
         output_dir=output_dir
     )
 
+def plot_full_warped_profile():
+    """Loads all data and creates the final warped profile plot."""
+    print("\n--- Generating Full Warped Seismic Section Plot ---")
+    seismic_file = Path("data/Sections/0MaMora1.dat")
+    topo_file = Path("data/Topo/topo_04.dat")
+    output_dir = Path("visualization/output")
+    output_dir.mkdir(exist_ok=True, parents=True)
+
+    seismic_df = load_seismic_data(seismic_file)
+    topo_x, topo_z = load_topography(topo_file)
+    topo_df = pd.DataFrame({
+        'x': topo_x,
+        'z': topo_z,
+        'line_id': 'topo_04'
+    })
+    
+    # Call the new plotting function
+    plot_warped_seismic_section(
+        seismic_df=seismic_df,
+        topo_df=topo_df,
+        output_dir=output_dir
+    )
+
+
     
 
 def main():
@@ -132,9 +157,10 @@ def main():
     
     # Option 2: Plot seismic sections (DEFAULT)
     #  Call the plotting function with the loaded DataFrames
-    plot_comparison()
+    #plot_comparison()
     #plot_seismic_sections()
     #plot_vector_data()
+    plot_full_warped_profile()
     
     print("\nOptions:")
     print("  - To change coordinate system, edit use_coordinate in main.py")
