@@ -76,7 +76,7 @@ def plot_vectors_and_topography(
 
     ax.set_xlabel("Distance (km)")
     ax.set_ylabel("Elevation (km)")
-    ax.set_title(f"{title}  (VE = {vertical_exaggeration:.1f}×) [1 of {arrow_stride} vectors shown]")
+    ax.set_title(f"{title}  (VE = {vertical_exaggeration:.1f}×) [1 of {arrow_stride} vectors shown]", fontweight='bold')
     ax.grid(True, alpha=0.3)
     ax.legend()
     ax.set_aspect(vertical_exaggeration)

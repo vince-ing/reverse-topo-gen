@@ -110,7 +110,7 @@ def plot_seismic_spatial(
 
     ax.set_xlabel(xlabel, fontsize=12)
     ax.set_ylabel('Depth/Elevation (km)', fontsize=12)
-    ax.set_title(f'All Seismic Lines by Unit - Spatial View (VE = {vertical_exaggeration:.1f}×)', fontsize=14, fontweight='bold')
+    ax.set_title(f'Unit Boundaries - Spatial View (VE = {vertical_exaggeration:.1f}×)', fontsize=14, fontweight='bold')
     ax.grid(True, alpha=0.3, linestyle='--')
 
     seismic_legend_elements = [Line2D([0], [0], color=color, lw=2, label=unit) for unit, color in unit_to_color.items()]
