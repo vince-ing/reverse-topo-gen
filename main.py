@@ -27,6 +27,7 @@ from models.vector_mapping import (
     plot_mapping, 
     plot_mapping_simple
 )
+from models.interpolation_z import run_interpolation as run_z_interpolation
 
 
 def plot_simple_topography():
@@ -190,6 +191,7 @@ def main():
     print("=" * 60)
     print("Topography & Seismic Profile Visualization")
     print("=" * 60)
+    run_z_interpolation(create_animation=True)
     
     # Choose what to run:
     # Option 1: Plot simple topography
@@ -199,9 +201,9 @@ def main():
     #  Call the plotting function with the loaded DataFrames
     #plot_comparison()
     #plot_seismic_sections()
-    plot_vector_data()
+    #plot_vector_data()
     #plot_full_warped_profile()
-    run_reconstruction()
+    #run_reconstruction()
     
     print("\nOptions:")
     print("  - To change coordinate system, edit use_coordinate in main.py")
@@ -220,8 +222,8 @@ def main():
     vectors = load_vectors(vectors_file)
     mapping_results = map_topo_to_vectors(topo_points, vectors)
 
-    plot_mapping(topo_points, vectors, mapping_results)
-    plot_mapping_simple(topo_points, mapping_results)
+    #plot_mapping(topo_points, vectors, mapping_results)
+    #plot_mapping_simple(topo_points, mapping_results)
 
     frame_paths = simulate_topography_evolution(topo_file, vector_files)
     # (Optional: You can use imageio or OpenCV to combine frames into a GIF/video)

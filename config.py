@@ -1,0 +1,1 @@
+vertical_exaggeration = 2.0
