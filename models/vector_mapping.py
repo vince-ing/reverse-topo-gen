@@ -29,6 +29,7 @@ def load_vectors(filepath):
                 vectors.append((x1, z1, x2, z2))
     return np.array(vectors)
 
+#vector mapping with green endpoints 
 def map_topo_to_vectors(topo_points, vectors):
     mapped = []
     vec_endpoints = vectors[:, 2:4]  # (x2, z2)
@@ -48,6 +49,7 @@ def map_topo_to_vectors(topo_points, vectors):
         })
     return mapped
 
+#vector mapping without vector endpoints
 def plot_mapping(topo_points, vectors, mapping_results):
     # Plot original topography points
     topo_x, topo_z = topo_points[:, 0], topo_points[:, 1]
@@ -68,5 +70,59 @@ def plot_mapping(topo_points, vectors, mapping_results):
     plt.legend()
     plt.grid(True)
     plt.show()
+
+def plot_mapping_simple(topo_points, mapping_results):
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots(figsize=(16, 9))
+
+    topo_x, topo_z = topo_points[:, 0], topo_points[:, 1]
+    mapped_x = [m['mapped'][0] for m in mapping_results]
+    mapped_z = [m['mapped'][1] for m in mapping_results]
+
+    ax.plot(topo_x, topo_z, color='blue', label='Topo Points')
+    ax.plot(mapped_x, mapped_z, color='red', label='Mapped Points')
+
+    ax.set_xlabel('X coordinate')
+    ax.set_ylabel('Z coordinate')
+    ax.set_title('Topography points and mapped points (no vector endpoints)')
+    ax.legend()
+    ax.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+def simulate_topography_evolution(topo_file, vector_files, output_dir="frames"):
+    import os
+    from pathlib import Path
+    Path(output_dir).mkdir(exist_ok=True)
+    topo_points = load_topo_points(topo_file)
+    current_points = topo_points.copy()
+    frame_files = []
+    for idx, vector_file in enumerate(vector_files):
+        vectors = load_vectors(vector_file)
+        mapped_results = map_topo_to_vectors(current_points, vectors)
+        # Plot and save frame
+        fig, ax = plt.subplots(figsize=(16, 9))
+        ax.plot(current_points[:, 0], current_points[:, 1], color='blue', label='Start Points')
+        mapped_x = [m['mapped'][0] for m in mapped_results]
+        mapped_z = [m['mapped'][1] for m in mapped_results]
+        ax.plot(mapped_x, mapped_z, color='red', label='Mapped Points')
+        ax.set_xlabel('X coordinate')
+        ax.set_ylabel('Z coordinate')
+        ax.set_title(f'ma vector: {vector_file} ({["5-0","9-5","20-9","27-20"][idx]})')
+        ax.legend()
+        ax.grid(True)
+        plt.tight_layout()
+        framepath = f"{output_dir}/frame_{idx:02d}.png"
+        fig.savefig(framepath)
+        plt.close(fig)
+        frame_files.append(framepath)
+        # Update for next iteration
+        current_points = np.column_stack([mapped_x, mapped_z])
+    return frame_files
+
+
 
 
