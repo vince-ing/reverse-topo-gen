@@ -51,7 +51,8 @@ def plot_seismic_sections():
         topo_file=topo_file if topo_file.exists() else None,
         vertical_exaggeration=1.0,
         save_path=output_dir / "all_lines_spatial.png",
-        use_coordinate=recommended_coord  # Use 'x', 'y', or 'both'
+        use_coordinate=recommended_coord,  # Use 'x', 'y', or 'both'
+        linewidth=1.0
     )
     
     # OPTION 2: Plot individual lines normalized (COMMENTED OUT)
