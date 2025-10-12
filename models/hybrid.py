@@ -200,7 +200,7 @@ def run_hybrid_model(params=None, create_animation=False):
     if create_animation:
         fig = plotter.plot_frame(
             current_x, current_z, time_elapsed,
-            model_name="Hybrid Model",
+            model_name="Vertical Interpolation Model",
             additional_info=f"ε={erosion_efficiency}, β={blend_factor}"
         )
         
@@ -262,7 +262,7 @@ def run_hybrid_model(params=None, create_animation=False):
             if create_animation:
                 fig = plotter.plot_frame(
                     x_remeshed, z_remeshed, time_elapsed,
-                    model_name="Hybrid Model",
+                    model_name="ΔZ Interpolation Model",
                     additional_info=f"ε={erosion_efficiency}, β={blend_factor}"
                 )
                 

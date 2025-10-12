@@ -154,7 +154,7 @@ def run_exponential_model(params=None, create_animation=False):
         
         fig = plotter.plot_frame(
             x_plot, z_plot, time_elapsed, 
-            model_name="Reverse Model",
+            model_name="Time Interpolation Model",
             additional_info=f"λ={lambda_topo} Ma"
         )
         
@@ -199,7 +199,7 @@ def run_exponential_model(params=None, create_animation=False):
             if create_animation:
                 fig = plotter.plot_frame(
                     x_remeshed, z_remeshed, time_elapsed,
-                    model_name="Reverse Model",
+                    model_name="Time Interpolation Model",
                     additional_info=f"λ={lambda_topo} Ma"
                 )
                 

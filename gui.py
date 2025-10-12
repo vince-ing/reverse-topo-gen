@@ -254,7 +254,7 @@ class TopoApp(tb.Window):
 
         # -- Exponential Parameters --
         self.param_frames["exponential"] = tb.LabelFrame(params_container, 
-                                                         text="Exponential Model Parameters", 
+                                                         text="Time Interpolation Model Parameters", 
                                                          bootstyle="info", padding=10)
         self._create_parameter_slider(self.param_frames["exponential"], "Decay Constant (λ):", 
                                      self.exp_lambda_topo_var, 1.0, 50.0, is_double=True)
@@ -263,7 +263,7 @@ class TopoApp(tb.Window):
 
         # -- Hybrid Parameters --
         self.param_frames["hybrid"] = tb.LabelFrame(params_container, 
-                                                    text="Hybrid Model Parameters", 
+                                                    text="Vertical Interpolation Model Parameters", 
                                                     bootstyle="info", padding=10)
         self._create_parameter_slider(self.param_frames["hybrid"], "Initial Elevation (km):", 
                                      self.hybrid_z_initial_var, -5.0, 5.0, is_double=True)
