@@ -30,6 +30,13 @@ from models.vector_mapping import (
 )
 from models.interpolation_z import run_interpolation as run_z_interpolation
 from models.exponential import run_exponential_model
+from models.vector_z_model import run_vector_z_model
+from models.hybrid import run_hybrid_model
+from models.isostatic_model import run_isostatic_model
+from models.diffusion_model import run_diffusion_model
+
+
+
 
 
 def plot_simple_topography():
@@ -195,7 +202,11 @@ def main():
     print("=" * 60)
 
     #run_z_interpolation(create_animation=True)
-    run_exponential_model(create_animation=True)
+    #run_vector_z_model(create_animation=True)
+    #run_exponential_model(create_animation=True)
+    #run_hybrid_model(create_animation=True)
+    #run_isostatic_model(create_animation=True)
+    run_diffusion_model(create_animation=True)
     
     # Choose what to run:
     # Option 1: Plot simple topography
