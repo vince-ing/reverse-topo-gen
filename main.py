@@ -1,4 +1,5 @@
 # main.py
+<<<<<<< HEAD
 import pandas as pd
 from models.interpolation import interpolate_surface, save_topography_gif
 
@@ -95,164 +96,17 @@ def run_topography_interpolation_and_gif():
 from models.interpolation_z import run_interpolation_alpha_z
 from models.exponential import run_exponential_model
 >>>>>>> Stashed changes
+=======
+"""
+Main entry point for landscape evolution models.
+"""
 
+import config
+>>>>>>> 4ae2c049122fb9355a7f9f3d990475223247da68
 
-def plot_simple_topography():
-    """Original topography plotting function"""
-    topo_file = Path("data/Topo/topo_04.dat")
-    x, z = load_topography(topo_file)
-    plot_topography(x, z, title=topo_file.name, vertical_exaggeration=1)
-
-def plot_seismic_sections():
-    """Plot seismic profile sections"""
-    # Load the seismic data
-    data_file = Path("data/Sections/0MaMora1.dat")
-    
-    print("Loading seismic data...")
-    df = load_seismic_data(data_file)
-    print(f"Loaded {len(df)} data points")
-    
-    # Show available lines
-    print("\nAvailable line IDs:")
-    line_summary = get_available_lines(df)
-    print(line_summary.head(20))  # Show first 20 lines
-    print(f"\nTotal lines: {len(line_summary)}")
-    
-    # Analyze spatial orientation
-    recommended_coord = analyze_line_orientation(df)
-    
-    # Path to topography file for overlay
-    topo_file = Path("data/Topo/topo_04.dat")
-    
-    # Create output directory if it doesn't exist
-    output_dir = Path("visualization/output")
-    output_dir.mkdir(exist_ok=True, parents=True)
-    
-    # OPTION 1: Plot all lines using actual spatial coordinates (DEFAULT)
-    print("\nPlotting all lines using spatial coordinates...")
-    plot_seismic_spatial(
-        df=df,
-        #topo_file=topo_file if topo_file.exists() else None,
-        vertical_exaggeration=1.0,
-        save_path=output_dir / "all_lines_spatial.png",
-        use_coordinate='both',  # Use 'x', 'y', or 'both'
-        #linewidth=1.0
-    )
-    
-    # OPTION 2: Plot individual lines normalized (COMMENTED OUT)
-    """
-    line_to_plot = 12974
-    print(f"\nPlotting line {line_to_plot}...")
-    plot_seismic_profile(
-        df=df,
-        line_id=line_to_plot,
-        topo_file=topo_file if topo_file.exists() else None,
-        vertical_exaggeration=5.0,
-        save_path=output_dir / f"profile_line_{line_to_plot}.png"
-    )
-    """
-    
-    print(f"\nDone! Figure saved to {output_dir}")
-
-def plot_vector_data():
-    """Plots vector data with a topographic overlay"""
-    vector_file = Path("data/Vectors/v_03.dat")
-    topo_file = Path("data/Topo/topo_04.dat")
-    plot_vectors_and_topography(
-        vector_file,
-        topo_file,
-        title="Vector Displacement with Topography",
-        arrow_stride=15 # Lower number = more arrows
-    )
-
-
-def plot_comparison():
-    """Loads seismic and topo data and plots them for comparison."""
-    # 1. Define file paths
-    seismic_file = Path("data/Sections/0MaMora1.dat")
-    topo_file = Path("data/Topo/topo_04.dat")
-    output_dir = Path("visualization/output")
-    output_dir.mkdir(exist_ok=True, parents=True)
-
-    # 2. Load the data from paths into DataFrames
-    seismic_df = load_seismic_data(seismic_file)
-    
-    # load_topography returns x, z arrays, so we must create a DataFrame
-    topo_x, topo_z = load_topography(topo_file)
-    topo_df = pd.DataFrame({
-        'x': topo_x,
-        'z': topo_z,
-        'line_id': 'topo_04'  # Add a line_id so the plotting function can find it
-    })
-
-    # 3. Call the plotting function with the loaded DataFrames <-- ADD THIS
-    plot_topo_comparison(
-        seismic_df=seismic_df,
-        topo_df=topo_df,
-        output_dir=output_dir
-    )
-
-def plot_full_warped_profile():
-    """Loads all data and creates the final warped profile plot."""
-    print("\n--- Generating Full Warped Seismic Section Plot ---")
-    seismic_file = Path("data/Sections/0MaMora1.dat")
-    topo_file = Path("data/Topo/topo_04.dat")
-    output_dir = Path("visualization/output")
-    output_dir.mkdir(exist_ok=True, parents=True)
-
-    seismic_df = load_seismic_data(seismic_file)
-    topo_x, topo_z = load_topography(topo_file)
-    topo_df = pd.DataFrame({
-        'x': topo_x,
-        'z': topo_z,
-        'line_id': 'topo_04'
-    })
-    
-    # Call the new plotting function
-    plot_warped_seismic_section(
-        seismic_df=seismic_df,
-        topo_df=topo_df,
-        output_dir=output_dir
-    )
-
-def run_reconstruction():
-    """
-    Loads seismic, topography, and vector data, runs the palinspastic
-    reconstruction on all layers, and plots the result.
-    """
-    print("\n--- Running Palinspastic Reconstruction ---")
-    seismic_file = Path("data/Sections/0MaMora1.dat")
-    vector_file = Path("data/Vectors/v_03.dat")
-    topo_file = Path("data/Topo/topo_04.dat") # <-- Path to topo data
-    output_dir = Path("visualization/output")
-    output_dir.mkdir(exist_ok=True, parents=True)
-
-    # 1. Load all data sources
-    seismic_df = load_seismic_data(seismic_file)
-    vectors = load_vectors(vector_file)
-    
-    # Load the reference topography and convert to a DataFrame
-    topo_x, topo_z = load_topography(topo_file)
-    topo_df = pd.DataFrame({'x': topo_x, 'z': topo_z})
-
-    if seismic_df.empty or vectors.size == 0 or topo_df.empty:
-        print("Could not load necessary data. Aborting reconstruction.")
-        return
-
-    # 2. Reconstruct both the seismic layers and the reference topography
-    reconstructed_seismic_df = reconstruct_layers(seismic_df, vectors)
-    reconstructed_topo_df = reconstruct_topography(topo_df, vectors)
-
-    # 3. Plot the final results
-    plot_reconstruction(
-        original_df=seismic_df,
-        reconstructed_df=reconstructed_seismic_df,
-        reconstructed_topo_df=reconstructed_topo_df,
-        output_dir=output_dir
-    )
-    
 
 def main():
+<<<<<<< HEAD
     """Main entry point - choose what to run"""
 
 <<<<<<< Updated upstream
@@ -319,5 +173,39 @@ def main():
     imageio.mimsave('topo_evolution.gif', images, duration=1)
     
 >>>>>>> Stashed changes
+=======
+    """
+    Main function to run the selected landscape evolution model.
+    Model selection is controlled by config.ACTIVE_MODEL
+    """
+    
+    print(f"\n{'='*60}")
+    print(f"LANDSCAPE EVOLUTION MODEL RUNNER")
+    print(f"{'='*60}")
+    print(f"Active model: {config.ACTIVE_MODEL}")
+    print(f"Geological sections: {'Enabled' if config.plot_geological_sections else 'Disabled'}")
+    print(f"Animation FPS: {config.animation_fps}")
+    print(f"Vertical exaggeration: {config.vertical_exaggeration}x")
+    print(f"{'='*60}\n")
+    
+    # Import and run the appropriate model
+    if config.ACTIVE_MODEL == 'exponential':
+        from models.exponential import run_exponential_model
+        run_exponential_model(create_animation=True)
+    elif config.ACTIVE_MODEL == 'hybrid':
+        from models.hybrid import run_hybrid_model
+        run_hybrid_model(create_animation=True)
+    elif config.ACTIVE_MODEL == 'isostatic':
+        from models.isostatic import run_isostatic_model
+        run_isostatic_model(create_animation=True)
+    else:
+        print(f"ERROR: Unknown model '{config.ACTIVE_MODEL}'")
+        print(f"Available models: exponential, hybrid, isostatic")
+        return
+    
+    print("\nModel run complete!")
+
+
+>>>>>>> 4ae2c049122fb9355a7f9f3d990475223247da68
 if __name__ == "__main__":
     main()
