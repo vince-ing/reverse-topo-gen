@@ -38,6 +38,7 @@ class TopoApp(tb.Window):
         self.fps_var = tk.IntVar(value=config.animation_fps)
         self.reverse_animation_var = tk.BooleanVar(value=config.reverse_animation)
         self.vertical_exaggeration_var = tk.IntVar(value=config.vertical_exaggeration)
+        self.plot_sections_var = tk.BooleanVar(value=config.plot_geological_sections)
 
         # Isostatic model parameters
         self.isostatic_blend_var = tk.DoubleVar(value=config.isostatic_blend_factor)
@@ -92,11 +93,16 @@ class TopoApp(tb.Window):
         frame.pack(fill=tk.X, pady=5)
         tb.Label(frame, text=text, width=25).pack(side=tk.LEFT, padx=(0, 10))
         
-        # Round double values for cleaner display
+        # Use classic tk.Scale instead of ttk.Scale for resolution support
         if is_double:
-            variable.trace_add("write", lambda *args: variable.set(round(variable.get(), 2)))
+            slider = tk.Scale(frame, from_=from_, to=to, variable=variable, 
+                            orient=tk.HORIZONTAL, resolution=0.1, 
+                            showvalue=False, highlightthickness=0)
+        else:
+            slider = tk.Scale(frame, from_=from_, to=to, variable=variable, 
+                            orient=tk.HORIZONTAL, resolution=1,
+                            showvalue=False, highlightthickness=0)
         
-        slider = tb.Scale(frame, from_=from_, to=to, variable=variable, orient=tk.HORIZONTAL)
         slider.pack(fill=tk.X, expand=True, side=tk.LEFT)
         entry = tb.Entry(frame, textvariable=variable, width=7)
         entry.pack(side=tk.LEFT, padx=(10, 0))
@@ -131,7 +137,7 @@ class TopoApp(tb.Window):
         global_settings_tab = tb.Frame(notebook, padding=10)
         notebook.add(global_settings_tab, text="Global Settings")
 
-        # Tab 3: Comparison - NEW
+        # Tab 3: Comparison 
         comparison_tab = tb.Frame(notebook, padding=10)
         notebook.add(comparison_tab, text="Compare Runs")
 
@@ -144,6 +150,9 @@ class TopoApp(tb.Window):
                                      self.vertical_exaggeration_var, 1, 20)
         tb.Checkbutton(global_settings_tab, text="Animate Forward in Time", 
                       variable=self.reverse_animation_var, 
+                      bootstyle="primary").pack(pady=10, anchor="w")
+        tb.Checkbutton(global_settings_tab, text="Plot Geological Sections",
+                      variable=self.plot_sections_var,
                       bootstyle="primary").pack(pady=10, anchor="w")
         
         # --- Widgets for Comparison Tab - NEW ---
@@ -428,6 +437,7 @@ class TopoApp(tb.Window):
             'fps': self.fps_var.get(),
             'reverse_animation': self.reverse_animation_var.get(),
             'vertical_exaggeration': self.vertical_exaggeration_var.get(),
+            'plot_geological_sections': self.plot_sections_var.get(),
             # Isostatic
             'isostatic_blend_factor': self.isostatic_blend_var.get(),
             'isostatic_smoothing_window': self.isostatic_smoothing_var.get(),

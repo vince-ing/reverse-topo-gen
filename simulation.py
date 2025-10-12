@@ -30,7 +30,8 @@ def run_simulation(params, output_file_path, result_queue):
     config.ACTIVE_MODEL = params['model']
     config.animation_fps = params['fps']
     config.reverse_animation = params['reverse_animation']
-    config.vertical_exaggeration = params['vertical_exaggeration']  # NEW
+    config.vertical_exaggeration = params['vertical_exaggeration']  
+    config.plot_geological_sections = params['plot_geological_sections']
     
     # Update model-specific parameters in config
     if params['model'] == 'isostatic':

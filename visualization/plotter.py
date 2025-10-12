@@ -4,7 +4,9 @@ Centralized plotting utilities for landscape evolution models.
 Handles all visualization logic separately from model computation.
 """
 
-import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')  
+import matplotlib.pyplot as plt  
 import numpy as np
 from pathlib import Path
 import config
