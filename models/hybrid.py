@@ -136,31 +136,38 @@ def compute_hybrid_state(x_modern, z_modern, current_x, original_x_positions,
     return x_remeshed, z_remeshed, original_x_remeshed, cumulative_dz_remeshed, progress
 
 
-def run_hybrid_model(create_animation=False):
+def run_hybrid_model(params=None, create_animation=False):
     """
     Run the hybrid landscape evolution model.
     X translation from vectors, Z decay uses vector spatial pattern 
     scaled to reach flat elevation at t_initial.
     
     Args:
+        params: Optional dictionary of parameters (for GUI integration)
         create_animation: If True, creates animation frames and GIF
     """
     print(f"\n{'='*60}")
     print("HYBRID MODEL: Vector X + Vector-weighted exponential Z")
     print(f"{'='*60}")
     
+    # Use params if provided, otherwise use config defaults
+    if params:
+        z_initial = params.get('hybrid_z_initial', config.hybrid_z_initial)
+        erosion_efficiency = params.get('hybrid_erosion_efficiency', config.hybrid_erosion_efficiency)
+        blend_factor = params.get('hybrid_blend_factor', config.hybrid_blend_factor)
+    else:
+        z_initial = config.hybrid_z_initial
+        erosion_efficiency = config.hybrid_erosion_efficiency
+        blend_factor = config.hybrid_blend_factor
+    
     # Load data
     x_modern, z_modern = load_topography()
     sections = load_geological_sections() if config.plot_geological_sections else None
     vector_data = load_all_vector_files()
     
-    # Get parameters from config
+    # Get time parameters from config
     t_initial = config.t_initial
     t_final = config.t_final
-    z_initial = config.hybrid_z_initial
-    erosion_efficiency = config.hybrid_erosion_efficiency
-    blend_factor = config.hybrid_blend_factor
-    
     total_time = sum(config.vector_files.values())
     
     print(f"\nModel Parameters:")

@@ -95,28 +95,35 @@ def compute_topography_state(x_modern, z_modern, current_x, original_x_positions
     return x_remeshed, z_remeshed, original_x_positions_remeshed
 
 
-def run_exponential_model(create_animation=False):
+def run_exponential_model(params=None, create_animation=False):
     """
     Run the exponential landscape evolution model.
     Hybrid approach: X translation from vectors (backward), Z from exponential equation.
     
     Args:
+        params: Optional dictionary of parameters (for GUI integration)
         create_animation: If True, creates animation frames and GIF
     """
     print(f"\n{'='*60}")
     print("EXPONENTIAL MODEL: Vector-based X + Exponential Z")
     print(f"{'='*60}")
     
+    # Use params if provided, otherwise use config defaults
+    if params:
+        lambda_topo = params.get('exp_lambda_topo', config.exp_lambda_topo)
+        z_initial = params.get('exp_z_initial', config.exp_z_initial)
+    else:
+        lambda_topo = config.exp_lambda_topo
+        z_initial = config.exp_z_initial
+    
     # Load data
     x_modern, z_modern = load_topography()
     sections = load_geological_sections() if config.plot_geological_sections else None
     vector_data = load_all_vector_files()
     
-    # Get parameters from config
+    # Get time parameters from config
     t_initial = config.t_initial
     t_final = config.t_final
-    lambda_topo = config.exp_lambda_topo
-    z_initial = config.exp_z_initial
     
     print(f"\nModel Parameters:")
     print(f"  Time range: {t_final} Ma (modern) → {t_initial} Ma (past)")

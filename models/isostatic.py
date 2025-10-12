@@ -188,7 +188,7 @@ def compute_isostatic_state(x_modern, z_modern, current_x, original_x_positions,
     return x_remeshed, z_remeshed, original_x_remeshed, cumulative_change_remeshed, progress
 
 
-def run_isostatic_model(create_animation=False):
+def run_isostatic_model(params, create_animation=False):
     """
     Run the isostatic landscape evolution model.
     X translation from vectors, Z from vectors with isostatic compensation.
@@ -199,6 +199,11 @@ def run_isostatic_model(create_animation=False):
     print(f"\n{'='*60}")
     print("ISOSTATIC MODEL: Vector-based with isostatic compensation")
     print(f"{'='*60}")
+
+    blend_factor = params['isostatic_blend_factor']
+    smoothing_window = params['isostatic_smoothing_window']
+    rho_crust = params['isostatic_rho_crust']
+    rho_mantle = params['isostatic_rho_mantle']
     
     # Load data
     x_modern, z_modern = load_topography()
