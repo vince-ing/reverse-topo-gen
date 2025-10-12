@@ -41,6 +41,47 @@ class TopographyPlotter:
         print(f"  X-axis: {self.x_min:.2f} to {self.x_max:.2f} km")
         print(f"  Z-axis: {self.z_min:.2f} to {self.z_max:.2f} km")
         print(f"  Geological sections: {'Enabled' if self.sections else 'Disabled'}")
+
+    def draw_rain(self, ax, topo_x, topo_z):
+        """
+        Draws animated rain on the plot based on config settings.
+        The rain is drawn as semi-transparent lines that extend from the
+        top of the plot down to the topography.
+        """
+        # Only draw if the feature is enabled and intensity is positive
+        if not config.enable_climate_erosion or config.rain_intensity <= 0:
+            return
+
+        # Get plot boundaries to determine where to draw the rain
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
+        
+        # Convert angle to radians
+        angle_rad = np.deg2rad(config.rain_direction_angle)
+
+        # Determine the number of raindrops based on intensity
+        num_drops = int(50 * config.rain_intensity)
+        
+        # Generate random starting X positions for the rain
+        x_starts = np.random.uniform(xlim[0], xlim[1], num_drops)
+        # Rain starts at the top of the plot
+        y_starts = np.full_like(x_starts, self.z_max)
+        
+        # Calculate where each rain streak ends
+        # 1. Find the topography height at the starting x-position of each streak
+        y_ends = np.interp(x_starts, topo_x, topo_z)
+        
+        # 2. Calculate the corresponding end x-position to maintain the correct angle
+        # tan(angle) = opposite / adjacent = (x_start - x_end) / (y_start - y_end)
+        # So, (x_start - x_end) = (y_start - y_end) * tan(angle)
+        x_ends = x_starts - (y_starts - y_ends) * np.tan(angle_rad)
+
+        # Plot each rain streak
+        for i in range(num_drops):
+            # Ensure rain doesn't plot below the topography if interpolation is imperfect
+            if y_starts[i] > y_ends[i]:
+                ax.plot([x_starts[i], x_ends[i]], [y_starts[i], y_ends[i]], 
+                        color='lightblue', alpha=0.6, linewidth=1.5, zorder=50)
     
     def plot_frame(self, x, z, time_ma, model_name="Model", additional_info=None):
         """
@@ -74,6 +115,9 @@ class TopographyPlotter:
             title += " (Modern)"
         if additional_info:
             title += f" ({additional_info})"
+        
+        # Draw rain animation if enabled
+        self.draw_rain(ax, x, z)
         
         ax.set_title(title, fontsize=14, fontweight='bold')
         ax.set_xlabel("X (km)")
@@ -178,6 +222,10 @@ class AnimationManager:
         from PIL import Image
         
         print(f"\nCreating animation with {len(self.frame_paths)} frames...")
+
+        if config.reverse_animation:
+            print("  - Reversing frame order for forward-in-time animation.")
+            self.frame_paths.reverse() 
         
         # Load all images
         images = [imageio.imread(fp) for fp in self.frame_paths]

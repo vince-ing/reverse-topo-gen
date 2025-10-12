@@ -13,17 +13,26 @@ animation_fps = 5
 vertical_exaggeration = 5
 figure_size = (12, 7)
 dpi = 100
+reverse_animation = False # Set to True to build the GIF from last frame to first
 
 # ============================================================================
 # MODEL SELECTION
 # ============================================================================
-ACTIVE_MODEL = 'isostatic'  # Options: 'exponential', etc.
+ACTIVE_MODEL = 'isostatic'  # Options: 'exponential', 'hyrbid' and 'isostatic'
 
 # ============================================================================
 # TIME PARAMETERS
 # ============================================================================
 t_initial = 27.0  # Ma (starting time - oldest)
 t_final = 0.0     # Ma (ending time - modern)
+
+# ============================================================================
+# CLIMATE & EROSION SETTINGS
+# ============================================================================
+enable_climate_erosion = False       # The master switch for this feature
+rain_direction_angle = -35.0        # Angle in degrees from vertical (-90 to 90)
+rain_intensity = 2.5                # Climate factor (e.g., 0.0 to 2.0)
+rain_shadow_effect = 0.1            # How much to reduce erosion in rain shadows (0-1)
 
 # ============================================================================
 # EXPONENTIAL MODEL PARAMETERS
@@ -36,7 +45,7 @@ exp_z_initial = 0.0     # Initial elevation at t_initial (km)
 # ============================================================================
 hybrid_z_initial = 0.0           # Initial elevation at t_initial (km)
 hybrid_erosion_efficiency = 0.7  # Controls spatial pattern (0-1)
-hybrid_blend_factor = 0.7        # Time vs spatial weighting (0-1)
+hybrid_blend_factor = 0.9        # Time vs spatial weighting (0-1)
 
 # ============================================================================
 # ISOSTATIC MODEL PARAMETERS
@@ -93,6 +102,15 @@ else:
     z_min_global = -2  # Minimum Z for plot (km)
     z_max_offset = 1.0  # Offset above max topography (km)
 
+# ============================================================================
+# COMPARISON GIF SETTINGS
+# ============================================================================
+# To use this, first generate the frames for two different model runs.
+# Then, set the paths to those frame directories here and run comparison.py.
+enable_comparison_gif = True
+# Example path: "output/frames/isostatic/01"
+comparison_source_dir_1 = "output/frames/isostatic/01"
+comparison_source_dir_2 = "output/frames/isostatic/02" # A different run
 
 # ============================================================================
 # OUTPUT SETTINGS

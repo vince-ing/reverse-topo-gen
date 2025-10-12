@@ -24,6 +24,7 @@ from visualization.data_loader import (
     load_all_vector_files
 )
 from visualization.plotter import TopographyPlotter, AnimationManager
+from .erosion import calculate_climate_erosion_factor
 
 
 def interpolate_vectors(topo_x, vector_x, dx, dz):
@@ -294,6 +295,13 @@ def run_isostatic_model(create_animation=False):
             
             # Add this timestep's topographic change
             topo_change_dt = isostatic_efficiency * interp_dz_dt
+            cumulative_topo_change += topo_change_dt
+
+            # Calculate the erosion factor based on the current topography
+            climate_factor = calculate_climate_erosion_factor(current_x, current_z)
+            
+            # Add this timestep's topographic change, MODIFIED by the climate factor
+            topo_change_dt = (isostatic_efficiency * interp_dz_dt) * climate_factor
             cumulative_topo_change += topo_change_dt
             
             if time_elapsed % 5 == 0:
