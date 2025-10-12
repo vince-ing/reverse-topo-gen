@@ -97,10 +97,50 @@ else:
 # ============================================================================
 # OUTPUT SETTINGS
 # ============================================================================
+OUTPUT_BASE_DIR = Path("output")
+
+def get_next_run_number(model_name, output_type='frames'):
+    """
+    Get the next sequential run number for a model.
+    
+    Args:
+        model_name: Name of the model
+        output_type: 'frames' or 'gifs'
+    
+    Returns:
+        int: Next run number (1, 2, 3, ...)
+    """
+    if output_type == 'frames':
+        base_path = OUTPUT_BASE_DIR / "frames" / model_name
+    else:  # gifs
+        base_path = OUTPUT_BASE_DIR / "gifs"
+    
+    base_path.mkdir(parents=True, exist_ok=True)
+    
+    if output_type == 'frames':
+        # Count existing run directories
+        existing = [d for d in base_path.iterdir() if d.is_dir() and d.name.isdigit()]
+    else:  # gifs
+        # Count existing gif files for this model
+        existing = [f for f in base_path.iterdir() if f.name.startswith(f"{model_name}_") and f.suffix == '.gif']
+    
+    if not existing:
+        return 1
+    
+    if output_type == 'frames':
+        max_num = max(int(d.name) for d in existing)
+    else:
+        # Extract numbers from filenames like "exponential_01.gif"
+        max_num = max(int(f.stem.split('_')[-1]) for f in existing)
+    
+    return max_num + 1
+
 def get_frames_output_dir():
-    """Get frames output directory based on active model."""
-    return Path(f"frames_output_{ACTIVE_MODEL}")
+    """Get frames output directory based on active model with sequential numbering."""
+    run_num = get_next_run_number(ACTIVE_MODEL, 'frames')
+    return OUTPUT_BASE_DIR / "frames" / ACTIVE_MODEL / f"{run_num:02d}"
 
 def get_animation_output_file():
-    """Get animation output filename based on active model."""
-    return f"topo_evolution_{ACTIVE_MODEL}.gif"
+    """Get animation output filename based on active model with sequential numbering."""
+    run_num = get_next_run_number(ACTIVE_MODEL, 'gifs')
+    return OUTPUT_BASE_DIR / "gifs" / f"{ACTIVE_MODEL}_{run_num:02d}.gif"
