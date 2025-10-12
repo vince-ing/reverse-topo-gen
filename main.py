@@ -2,10 +2,17 @@
 import pandas as pd
 from models.interpolation import interpolate_surface, save_topography_gif
 
+<<<<<<< Updated upstream
 import imageio.v2 as imageio
+=======
+from config import *
+from models.interpolation_z import run_interpolation_alpha_z
+>>>>>>> Stashed changes
 from models.vector_mapping import simulate_topography_evolution
 from visualization.data_load import load_topography
 from visualization.plotting import plot_topography
+from models.alpha_z_evolution import run_alpha_z_evolution
+
 from visualization.seismic_profile_plotter import (
     load_seismic_data,
     plot_seismic_profile,
@@ -28,6 +35,7 @@ from models.vector_mapping import (
     plot_mapping, 
     plot_mapping_simple
 )
+<<<<<<< Updated upstream
 def run_topography_interpolation_and_gif():
     topo_file = Path("data/Topo/topo_04.dat")
     x_init, z_init = load_topography(topo_file)
@@ -83,6 +91,10 @@ def run_topography_interpolation_and_gif():
     print("Saved interpolated topo animation to interpolated_topography.gif")
 
 
+=======
+from models.interpolation_z import run_interpolation_alpha_z
+from models.exponential import run_exponential_model
+>>>>>>> Stashed changes
 
 
 def plot_simple_topography():
@@ -243,12 +255,22 @@ def run_reconstruction():
 def main():
     """Main entry point - choose what to run"""
 
+<<<<<<< Updated upstream
     ##topography interpolation gif 
     run_topography_interpolation_and_gif()
     
     # print("=" * 60)
     # print("Topography & Seismic Profile Visualization")
     # print("=" * 60)
+=======
+    print("=" * 60)
+    print("Topography & Seismic Profile Visualization")
+    print("=" * 60)
+
+    #run_z_interpolation(create_animation=True)
+    run_alpha_z_evolution(create_animation=True)
+
+>>>>>>> Stashed changes
     
     # # Choose what to run:
     # # Option 1: Plot simple topography
@@ -289,6 +311,13 @@ def main():
     # images = [imageio.imread(fp) for fp in frame_paths]
     # imageio.mimsave('topo_evolution.gif', images, duration=1)
 
+<<<<<<< Updated upstream
 
+=======
+    # For GIF:
+    images = [imageio.imread(fp) for fp in frame_paths]
+    imageio.mimsave('topo_evolution.gif', images, duration=1)
+    
+>>>>>>> Stashed changes
 if __name__ == "__main__":
     main()
