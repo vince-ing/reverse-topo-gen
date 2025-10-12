@@ -95,6 +95,9 @@ fill_alpha = 0.1
 
 # Plot margins and limits
 x_margin_fraction = 0.2  # Fraction of x-range to add as margin
+y_axis_padding_top = 1.0    
+y_axis_padding_bottom = 2.0
+
 if plot_geological_sections == True:
     z_min_global = -25  # Minimum Z for plot (km)
     z_max_offset = 5.0  # Offset above max topography (km)

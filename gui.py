@@ -29,7 +29,7 @@ class TopoApp(tb.Window):
 
         # --- Queue for thread communication ---
         self.simulation_queue = queue.Queue()
-        self.comparison_queue = queue.Queue()  # NEW
+        self.comparison_queue = queue.Queue()  
 
         # --- Create Control Variables ---
         self.model_var = tk.StringVar(value=config.ACTIVE_MODEL)
@@ -39,6 +39,8 @@ class TopoApp(tb.Window):
         self.reverse_animation_var = tk.BooleanVar(value=config.reverse_animation)
         self.vertical_exaggeration_var = tk.IntVar(value=config.vertical_exaggeration)
         self.plot_sections_var = tk.BooleanVar(value=config.plot_geological_sections)
+        self.y_axis_padding_top_var = tk.DoubleVar(value=1.0)     
+        self.y_axis_padding_bottom_var = tk.DoubleVar(value=2.0)  
 
         # Isostatic model parameters
         self.isostatic_blend_var = tk.DoubleVar(value=config.isostatic_blend_factor)
@@ -154,6 +156,10 @@ class TopoApp(tb.Window):
         tb.Checkbutton(global_settings_tab, text="Plot Geological Sections",
                       variable=self.plot_sections_var,
                       bootstyle="primary").pack(pady=10, anchor="w")
+        self._create_parameter_slider(global_settings_tab, "Y-Axis Top Padding (km):", 
+                             self.y_axis_padding_top_var, 0.0, 10.0, is_double=True)
+        self._create_parameter_slider(global_settings_tab, "Y-Axis Bottom Padding (km):", 
+                                    self.y_axis_padding_bottom_var, 0.0, 30.0, is_double=True)
         
         # --- Widgets for Comparison Tab - NEW ---
         tb.Label(comparison_tab, text="Compare Two Simulation Runs", 
@@ -438,6 +444,8 @@ class TopoApp(tb.Window):
             'reverse_animation': self.reverse_animation_var.get(),
             'vertical_exaggeration': self.vertical_exaggeration_var.get(),
             'plot_geological_sections': self.plot_sections_var.get(),
+            'y_axis_padding_top': self.y_axis_padding_top_var.get(),      
+            'y_axis_padding_bottom': self.y_axis_padding_bottom_var.get(), 
             # Isostatic
             'isostatic_blend_factor': self.isostatic_blend_var.get(),
             'isostatic_smoothing_window': self.isostatic_smoothing_var.get(),

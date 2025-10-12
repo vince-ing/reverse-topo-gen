@@ -32,6 +32,8 @@ def run_simulation(params, output_file_path, result_queue):
     config.reverse_animation = params['reverse_animation']
     config.vertical_exaggeration = params['vertical_exaggeration']  
     config.plot_geological_sections = params['plot_geological_sections']
+    config.y_axis_padding_top = params['y_axis_padding_top']          
+    config.y_axis_padding_bottom = params['y_axis_padding_bottom']   
     
     # Update model-specific parameters in config
     if params['model'] == 'isostatic':

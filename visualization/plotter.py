@@ -36,8 +36,10 @@ class TopographyPlotter:
         x_margin = (x_modern.max() - x_modern.min()) * config.x_margin_fraction
         self.x_min = x_modern.min() - x_margin
         self.x_max = x_modern.max() + x_margin
-        self.z_min = config.z_min_global
-        self.z_max = z_modern.max() + config.z_max_offset
+        #self.z_min = config.z_min_global
+        #self.z_max = z_modern.max() + config.z_max_offset
+        self.z_max = z_modern.max() + config.y_axis_padding_top      
+        self.z_min = z_modern.min() - config.y_axis_padding_bottom
         
         print(f"\nPlotter initialized:")
         print(f"  X-axis: {self.x_min:.2f} to {self.x_max:.2f} km")
