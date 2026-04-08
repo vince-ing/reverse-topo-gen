@@ -3,7 +3,9 @@ This is a project that reconstructs surface topology from only vector data, visu
 
 Features:
 - 3 models: isostatic, exponential, or hybrid
-- Adjustable hyperparameters such as erosion efficiency, decay constants, crest density, and mantle density. 
+- Adjustable hyperparameters such as erosion efficiency, decay constants, crest density, and mantle density.
+- Compare and constrast different runs and models
+- Option to plot changing geologic sections through time
 
 How to use: 
 Ensure that all dependencies in requirements.txt are installed.
