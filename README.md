@@ -1,5 +1,9 @@
 # reverse-topo-gen
-This is a project that reconstructs surface topology from only vector data and time stamps. It utilizes machine learning algorithms and features a simulation that allows users to interact with the data.
+This is a project that reconstructs surface topology from only vector data, visualizing it through time. It utilizes geophysics combined with machine learning algorithms to calculate surface topography, and presents it in a user-friendly and interactive simulation. 
+
+Features:
+- 3 models: isostatic, exponential, or hybrid
+- Adjustable hyperparameters such as erosion efficiency, decay constants, crest density, and mantle density. 
 
 How to use: 
 Ensure that all dependencies in requirements.txt are installed.
