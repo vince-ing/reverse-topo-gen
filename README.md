@@ -1,5 +1,8 @@
 # reverse-topo-gen
-To use this, ensure that all dependencies in requirements.txt are installed.
+This is a project that reconstructs surface topology from only vector data and time stamps. It utilizes machine learning algorithms and features a simulation that allows users to interact with the data.
+
+How to use: 
+Ensure that all dependencies in requirements.txt are installed.
 Run from gui.py in the root folder.
 Default data from Mora et al. 2015 is provided but you can enter your own.
   Data for the topography profile must be in x, z columns
